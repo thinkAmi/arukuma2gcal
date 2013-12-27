@@ -1,0 +1,1 @@
+clock: bundle exec clockwork gather_scheduled.rb

@@ -19,7 +19,5 @@ doc/
 
 # Application
 vendor/bundle
-.google-api.yaml
-arukuma_config.yaml
-cacert.pem
-win_fetch_cacerts.rb
+.env
+local_settings/

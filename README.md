@@ -21,17 +21,16 @@ arukuma2gcal
 ----------
 コマンドラインから実行するために、以下の設定を行います。
 
-### .google-api.yaml の作成
-`.google-api.example.yaml` をリネームし、必要な項目を埋めます。  
+### .env の作成
+`.example.env` を `.env` にリネームし、必要な項目を埋めます。
 
-あるいは、 `google-api-client` を実行して、`.google-api.yaml` を取得します。  
-Windowsで取得する方法については、以下を参照下さい。 
+なお、GoogleAPIに関する部分は、`google-api-client` を実行すると、`.google-api.yaml` ができるので、その内容を記載します。  
+Windowsで取得する方法については、以下を参照下さい。  
 [Windows7 + Ruby + google-api-clientで、GoogleAPI向けOAuth認証用のYAMLファイルを取得する](http://d.hatena.ne.jp/thinkAmi/20131218/1387317778)
 　  
 　  
+また、`GOOGLE_CALENDAR_ID` には、対象のGoogleカレンダーIDを設定します。
 
-### arukuma_config.yaml の作成
-`arukuma_config_example.yaml`をリネームし、対象のGoogleカレンダーIDを設定します。
 　  
 　  
 
@@ -55,10 +54,11 @@ Bundlerでセットアップします。
 
 使い方
 ----------
+###コマンドラインから使う場合
 上記パターン別のスクリプトを使います。  
 実際の動きとしては、その期間の全イベントを削除してから、登録するようにしてあります。
 
-###同月1日～月末のアルクマスケジュールを登録する
+####同月1日～月末のアルクマスケジュールを登録する
 
     cd \path\to\Arukumap
     bundle exec ruby gather_all.rb
@@ -66,11 +66,36 @@ Bundlerでセットアップします。
 　  
 
 
-### システム日付～月末のアルクマスケジュールを登録する
+#### システム日付～月末のアルクマスケジュールを登録する
     cd \path\to\Arukumap
     bundle exec ruby gather.rb
 　  
 　  
+###Herokuで使う場合
+Herokuのアプリを作ります。
+
+    heroku create
+    git push heroku master
+
+heroku-configプラグインで.envファイルの内容をHerokuアプリの環境変数としてpushして確認します。
+
+    heroku config:push
+    heroku config
+
+Herokuのタイムゾーンを確認します。`2013-12-28 5:00:00 +0900` のように日本標準時が設定されていることを確認します。
+
+    heroku run console
+    Time.now
+
+Herokuのプロセスを作成・確認します。
+
+    heroku scale clock=1
+    heroku ps
+
+Herokuのログで実行されていることを確認します。
+
+    heroku logs
+
 
 ライセンス
 ----------

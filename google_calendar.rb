@@ -2,39 +2,35 @@
 
 require 'date'
 require "google/api_client"
-require 'yaml'
-
+require 'dotenv'
 
 
 class GoogleCalendar
 
   attr_reader :client, :service
   def initialize
-    unless File.exist?('.google-api.yaml')
+    Dotenv.load
+
+    # .envファイルには設定済である前提なので、チェックは気持ち程度
+    if ENV['GOOGLE_CLIENT_ID'].nil?
       raise StandardError
     end
 
-    unless File.exist?('arukuma_config.yaml')
-      raise StandardError
-    end
-
-    oauth_yaml = YAML.load_file('.google-api.yaml')
-    @client = Google::APIClient.new(application_name: 'arukumap', 
+    @client = Google::APIClient.new(application_name: 'arukumap',
                                     application_version: '1')
-    @client.authorization.client_id = oauth_yaml['client_id']
-    @client.authorization.client_secret = oauth_yaml['client_secret']
-    @client.authorization.scope = oauth_yaml['scope']
-    @client.authorization.refresh_token = oauth_yaml['refresh_token']
-    @client.authorization.access_token = oauth_yaml['access_token']
+
+    @client.authorization.client_id = ENV['GOOGLE_CLIENT_ID']
+    @client.authorization.client_secret = ENV['GOOGLE_CLIENT_SECRET']
+    @client.authorization.scope = ENV['GOOGLE_SCOPE']
+    @client.authorization.refresh_token = ENV['GOOGLE_REFRESH_TOKEN']
+    @client.authorization.access_token = ENV['GOOGLE_ACCESS_TOKEN']
 
     if @client.authorization.refresh_token && @client.authorization.expired?
       @client.authorization.fetch_access_token!
     end
 
     @service = @client.discovered_api('calendar', 'v3')
-
-    cal_yaml = YAML.load_file('arukuma_config.yaml')
-    @calendar_id = cal_yaml['calendar_id']
+    @calendar_id = ENV['GOOGLE_CALENDAR_ID']
   end
 
 
